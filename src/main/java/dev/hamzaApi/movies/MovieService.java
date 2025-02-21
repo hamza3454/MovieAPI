@@ -19,7 +19,7 @@ public class MovieService {
         return movieRepository.findAll();
     }
 
-    public Optional<Movie> singleMovie(ObjectId id) { // we say optional in case movie is NULL
-        return movieRepository.findById(id);
+    public Optional<Movie> singleMovie(String imdbId) { // we say optional in case movie is NULL
+        return movieRepository.findMovieByImdbId(imdbId);
     }
 }
