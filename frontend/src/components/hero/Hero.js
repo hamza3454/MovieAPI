@@ -57,4 +57,4 @@ const Hero = ({movies}) => {
   )
 }
 
-export default Hero;
+export default Hero

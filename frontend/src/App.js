@@ -8,7 +8,7 @@ import Home from './components/home/Home';
 
 function App() {
 
-  const [movies,setMovies] = useState();
+  const [movies, setMovies] = useState([]); 
 
   // handles https get request to an endpoint that returns an array of movie data 
   const getMovies = async () => {
@@ -39,13 +39,12 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<Layout/>}>
-            <Route path="/" element={<Home/>}></Route>
+            <Route path="/" element={<Home movies={movies}/>}></Route>
             
         </Route>
       </Routes>
     </div>
   );
 }
-import { formGroupClasses } from '@mui/material';
 
 export default App;
