@@ -44,8 +44,9 @@ function App() {
         const singleMovie = response.data;
 
         setMovie(singleMovie);
+        console.log(singleMovie);
 
-        setReviews(singleMovie.reviews);
+        setReviews(singleMovie.reviewIds);
         
 
     } 
@@ -53,6 +54,7 @@ function App() {
     {
       console.error(error);
     }
+
 
   }
 
