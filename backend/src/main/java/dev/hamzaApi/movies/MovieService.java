@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MovieService {
+public class  MovieService {
     @Autowired // lets the framework know that we want to initialize moveRepo
     private MovieRepository movieRepository;
 
