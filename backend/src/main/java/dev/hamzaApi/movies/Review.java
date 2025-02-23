@@ -24,4 +24,8 @@ public class Review {
         this.email = email;
         this.name = name;
     }
+
+    public String getId() {
+        return id.toHexString(); // Converts ObjectId to string
+    }
 }

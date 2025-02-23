@@ -1,12 +1,15 @@
 package dev.hamzaApi.movies;
 
 // 2 ways to talk to a database, repository / template
+import org.bson.types.ObjectId;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service // Used with classes that provide some business functionalities
 public class ReviewService {
@@ -29,5 +32,35 @@ public class ReviewService {
                 .first();
 
         return review; // returning the review we just created
+    }
+
+    public boolean deleteReview(String reviewId, String userEmail) {
+        try {
+            ObjectId objectId = new ObjectId(reviewId); // ✅ Convert String to ObjectId
+
+            // ✅ Find the review by ID and ensure ownership
+            Optional<Review> review = reviewRepository.findById(objectId);
+
+            if (review.isPresent()) {
+                // ✅ Check if the logged-in user is the owner
+                if (!review.get().getEmail().equals(userEmail)) {
+                    return false; // ❌ Not authorized
+                }
+
+                // ✅ Remove review from the Movie's reviewIds array
+                mongoTemplate.update(Movie.class)
+                        .matching(Criteria.where("reviewIds").in(objectId))
+                        .apply(new Update().pull("reviewIds", objectId))
+                        .first();
+
+                // ✅ Delete the review itself
+                reviewRepository.delete(review.get());
+                return true; // ✅ Successfully deleted
+            } else {
+                return false; // ❌ Review does not exist
+            }
+        } catch (IllegalArgumentException e) {
+            return false; // ❌ Invalid ObjectId format
+        }
     }
 }
