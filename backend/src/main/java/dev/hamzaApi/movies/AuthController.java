@@ -42,7 +42,14 @@ public class AuthController {
                 "&scope=email+openid+profile";
         return ResponseEntity.ok(new UrlDto(url));
     }
+    @GetMapping("/auth/logout")
+    public ResponseEntity<String> logout() {
+        String logoutUrl = cognitoUri + "/logout?"
+                + "client_id=" + clientId
+                + "&logout_uri=http://localhost:3000";
 
+        return ResponseEntity.ok(logoutUrl);
+    }
     @GetMapping("/auth/callback")
     public ResponseEntity<TokenDto> callback(@RequestParam("code") String code) {
         try {

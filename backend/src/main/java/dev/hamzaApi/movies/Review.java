@@ -16,8 +16,12 @@ public class Review {
     @Id
     private ObjectId id;
     private String body;
+    private String email;
+    private String name;
 
-    public Review(String body) {
+    public Review(String body, String email, String name) {
         this.body = body;
+        this.email = email;
+        this.name = name;
     }
 }

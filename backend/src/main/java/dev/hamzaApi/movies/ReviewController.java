@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.Map;
 
@@ -17,9 +19,29 @@ public class ReviewController {
     @Autowired
     private ReviewService reviewService;
 
+
     @PostMapping
-    // whatever we get as the request body, we would like to convert it to a map of key and value strings
-    public ResponseEntity<Review> createReview(@RequestBody Map<String, String> payload) {
-        return new ResponseEntity<Review>(reviewService.createReview(payload.get("reviewBody"), payload.get("imdbId")), HttpStatus.CREATED);
+    public ResponseEntity<Review> createReview(
+            @RequestBody Map<String, String> payload,
+            @AuthenticationPrincipal Jwt jwt // ✅ Extracts JWT automatically
+    ) {
+        // ✅ Extract user info from JWT
+        String userId = jwt.getClaimAsString("sub"); // Unique user ID
+        String userEmail = jwt.getClaimAsString("email"); // Email (if available)
+        String userName = jwt.getClaimAsString("name");
+
+        System.out.println("User ID: " + userId);
+        System.out.println("User Email: " + userEmail);
+
+        // ✅ Pass userId or userEmail with review
+        Review review = reviewService.createReview(
+                payload.get("reviewBody"),
+                payload.get("imdbId"),
+                userId, // Send user identity
+                userName
+        );
+
+        return new ResponseEntity<>(review, HttpStatus.CREATED);
     }
+
 }

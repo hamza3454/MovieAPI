@@ -18,8 +18,8 @@ public class ReviewService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public Review createReview(String reviewBody, String imdbId) { // look for the movie with the given id, then create new review
-        Review review = reviewRepository.insert(new Review(reviewBody));
+    public Review createReview(String reviewBody, String imdbId, String email, String userName) { // look for the movie with the given id, then create new review
+        Review review = reviewRepository.insert(new Review(reviewBody, email, userName));
 
         // using the template to perform an update call on the movie class
         // each movie has an empty array of reviewIds, these need to be updated
