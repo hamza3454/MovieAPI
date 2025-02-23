@@ -5,16 +5,56 @@ import Container from "react-bootstrap/Container"
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import {NavLink} from "react-router-dom";
-import { useAuth } from "react-oidc-context";
+import { useEffect, useState } from "react";
+import api from "../../api/axiosConfig";
+import {AppActions }from "../../api/AppActions";
+
 
 const Header = () => {
-    const auth = useAuth();
-    const signOutRedirect = () => {
-        const clientId = "64l6mbgel2g52rv3lb0n3mm02m";
-        const logoutUri = "<logout uri>";
-        const cognitoDomain = "https://<user pool domain>";
-        window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-      };
+    const [name, setname] = useState(null);
+
+      useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get("code");
+
+        if (code) {
+            api.get(`/auth/callback`, {
+                params: { code } // Pass as query parameter
+            })
+            .then(response => {
+                AppActions.setAuthToken(response.data.token);
+                console.log(response.data.token);
+            })
+            .catch(error => {
+                console.error("OAuth callback failed:", error);
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        api.get(`/name`)
+        .then(response => {
+            console.log(response);
+            setname(response.data.message);
+        })
+        .catch(error => {
+            console.error("err:", error);
+        });
+    }, []);
+
+    const [cognitoUrl, setCognitoUrl] = useState('');
+
+    useEffect(() => {
+        api.get("/auth/url")
+            .then(response => {
+                setCognitoUrl(response.data.url); // Assuming response contains { url: "..." }
+                console.log(response);
+            })
+            .catch(error => {
+                console.error("Error fetching Cognito URL:", error);
+            })
+        
+    }, []);
     return (
         <Navbar bg="dark" variant="dark" expand="lg">
             <Container fluid>
@@ -29,10 +69,12 @@ const Header = () => {
                             navbarScroll
                         >
                         <NavLink className ="nav-link" to="/">Home</NavLink>
-                        <NavLink className ="nav-link" to="/watchList">Watch List</NavLink>      
+                        <NavLink className ="nav-link" to="/watchList">Watch List</NavLink>
+                        {name ? <NavLink className ="nav-link" >Welcome back <b> {name}</b>!</NavLink>: null}
+                              
                     </Nav>
-                    <Button onClick={() => auth.signinRedirect()} variant="outline-info" className="me-2">Login</Button>
-                    <Button variant="outline-info">Register</Button>
+                    <Button onClick={() => {window.location.href = cognitoUrl;}} variant="outline-info" className="me-2">Login</Button>
+                    <Button onClick={() => signOutRedirect()} variant="outline-info">Logout</Button>
                 </Navbar.Collapse>
             </Container>
         </Navbar>
