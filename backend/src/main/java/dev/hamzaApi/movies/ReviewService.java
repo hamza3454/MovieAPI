@@ -36,34 +36,30 @@ public class ReviewService {
 
     public boolean deleteReview(String reviewId, String userEmail) {
         try {
-            ObjectId objectId = new ObjectId(reviewId); // ✅ Convert String to ObjectId
+            ObjectId objectId = new ObjectId(reviewId);
             System.out.println(reviewId);
             System.out.println(userEmail);
-            // ✅ Find the review by ID and ensure ownership
             Optional<Review> review = reviewRepository.findById(objectId);
 
             if (review.isPresent()) {
                 System.out.println(review);
-                // ✅ Check if the logged-in user is the owner
                 if (!review.get().getEmail().equals(userEmail)) {
                     System.out.println("I not found the email");
-                    return false; // ❌ Not authorized
+                    return false;
                 }
 
-                // ✅ Remove review from the Movie's reviewIds array
                 mongoTemplate.update(Movie.class)
                         .matching(Criteria.where("reviewIds").in(objectId))
                         .apply(new Update().pull("reviewIds", objectId))
                         .first();
 
-                // ✅ Delete the review itself
                 reviewRepository.delete(review.get());
-                return true; // ✅ Successfully deleted
+                return true;
             } else {
-                return false; // ❌ Review does not exist
+                return false;
             }
         } catch (IllegalArgumentException e) {
-            return false; // ❌ Invalid ObjectId format
+            return false;
         }
     }
 }

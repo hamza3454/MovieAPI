@@ -51,13 +51,12 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: No token provided");
         }
 
-        // ✅ Extract user email from JWT
         String userEmail = jwt.getClaimAsString("sub");
         if (userEmail == null || userEmail.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token: Email not found");
         }
 
-        // ✅ Ensure the user is the owner before deleting
+
         boolean deleted = reviewService.deleteReview(reviewId, userEmail);
 
         if (deleted) {

@@ -38,7 +38,7 @@ public class AuthController {
                 "/oauth2/authorize?" +
                 "response_type=code" +
                 "&client_id=" + clientId +
-                "&redirect_uri=http://localhost:3000" +
+                "&redirect_uri=http://52.14.50.30:8080" +
                 "&scope=email+openid+profile";
         return ResponseEntity.ok(new UrlDto(url));
     }
@@ -46,7 +46,7 @@ public class AuthController {
     public ResponseEntity<String> logout() {
         String logoutUrl = cognitoUri + "/logout?"
                 + "client_id=" + clientId
-                + "&logout_uri=http://localhost:3000";
+                + "&logout_uri=http://52.14.50.30:8080";
 
         return ResponseEntity.ok(logoutUrl);
     }
@@ -58,7 +58,7 @@ public class AuthController {
                     + "grant_type=authorization_code" +
                     "&client_id=" + clientId +
                     "&code=" + code +
-                    "&redirect_uri=http://localhost:3000";
+                    "&redirect_uri=http://52.14.50.30:8080";
 
             String authenticationInfo = clientId + ":" + clientSecret;
             String basicAuthenticationInfo = Base64.getEncoder().encodeToString(authenticationInfo.getBytes());
