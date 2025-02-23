@@ -4,13 +4,14 @@ import {useParams} from 'react-router-dom';
 import {Container, Row, Col} from 'react-bootstrap';
 import ReviewForm from '../reviewForm/ReviewForm';
 import React from 'react'
+import { capitalize } from '@mui/material';
 
 const Reviews = ({getMovieData,movie,reviews,setReviews}) => {
 
     const revText = useRef();
     let params = useParams();
     const movieId = params.movieId;
-
+    console.log(reviews);
     useEffect(()=>{
         getMovieData(movieId);
     },[])
@@ -23,11 +24,9 @@ const Reviews = ({getMovieData,movie,reviews,setReviews}) => {
         try
         {
             const response = await api.post("/api/v1/reviews",{reviewBody:rev.value,imdbId:movieId});
-
-            const updatedReviews = [...reviews, {body:rev.value}];
-    
-            rev.value = "";
-    
+            console.log(response);
+            const updatedReviews = [...reviews, {...response.data}];
+            
             setReviews(updatedReviews);
         }
         catch(err)
@@ -64,7 +63,7 @@ const Reviews = ({getMovieData,movie,reviews,setReviews}) => {
                         return(
                             <>
                                 <Row>
-                                    <Col>{r.body}</Col>
+                                    <Col><b>{r.name ? r.name + ": " : null}</b>{r.body}</Col>
                                 </Row>
                                 <Row>
                                     <Col>
