@@ -1,10 +1,11 @@
 import {useEffect, useRef} from 'react';
 import api from '../../api/axiosConfig';
 import {useParams} from 'react-router-dom';
-import {Container, Row, Col} from 'react-bootstrap';
+import {Container, Row, Col, Button} from 'react-bootstrap';
 import ReviewForm from '../reviewForm/ReviewForm';
 import React from 'react'
 import { capitalize } from '@mui/material';
+import { useState } from 'react';
 
 const Reviews = ({getMovieData,movie,reviews,setReviews}) => {
 
@@ -12,8 +13,18 @@ const Reviews = ({getMovieData,movie,reviews,setReviews}) => {
     let params = useParams();
     const movieId = params.movieId;
     console.log(reviews);
+    const [name, setname] = useState(null);
     useEffect(()=>{
         getMovieData(movieId);
+
+        api.get(`/name`)
+                .then(response => {
+                    console.log(response);
+                    setname(response.data.message);
+                })
+                .catch(error => {
+                    console.error("err:", error);
+                });
     },[])
 
     const addReview = async (e) =>{
@@ -34,6 +45,25 @@ const Reviews = ({getMovieData,movie,reviews,setReviews}) => {
             console.error(err);
         }
     }
+
+    const deleteReview = async (reviewId) => { // Added delete function
+        const token = localStorage.getItem("token");
+
+
+
+        try {
+            await api.delete(`/api/v1/reviews/${reviewId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            setReviews(reviews.filter((review) => review.id !== reviewId)); // Remove deleted review from state
+        } catch (err) {
+            console.error("Error deleting review:", err);
+        }
+    };
+
     return (
         <Container>
             <Row>
@@ -58,7 +88,7 @@ const Reviews = ({getMovieData,movie,reviews,setReviews}) => {
                             </Col>
                         </Row>
                     </>
-                    {/* ✅ Scrollable Reviews Section */}
+                    {}
                     <div style={styles.scrollContainer}>
                         {reviews?.slice().reverse().map((r, index) => (
                             <React.Fragment key={index}>
@@ -66,6 +96,16 @@ const Reviews = ({getMovieData,movie,reviews,setReviews}) => {
                                     <Col>
                                         <b>{r.name ? r.name + ": " : null}</b>
                                         {r.body}
+                                    </Col>
+                                    <Col xs="auto">
+                                        {name === r.name ? 
+                                        <Button
+                                            variant="secondary"
+                                            size="sm"
+                                            onClick={() => deleteReview(r.id)}
+                                        >
+                                            ❌
+                                        </Button> : null}
                                     </Col>
                                 </Row>
                                 <Row>

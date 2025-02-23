@@ -40,6 +40,7 @@ const Header = () => {
             .then(response => {
                 AppActions.setAuthToken(response.data.token);
 
+
                 api.get(`/name`)
                 .then(response => {
                     console.log(response);
