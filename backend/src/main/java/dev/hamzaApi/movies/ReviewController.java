@@ -25,11 +25,11 @@ public class ReviewController {
     ) {
         // Extract user info from JWT
         String userId = jwt.getClaimAsString("sub"); // Unique user ID
-        String userEmail = jwt.getClaimAsString("email"); // Email (if available)
+        //String userEmail = jwt.getClaimAsString("email"); // Email (if available)
         String userName = jwt.getClaimAsString("name");
 
         System.out.println("User ID: " + userId);
-        System.out.println("User Email: " + userEmail);
+        //System.out.println("User Email: " + userEmail);
 
         // Pass userId or userEmail with review
         Review review = reviewService.createReview(
@@ -52,7 +52,7 @@ public class ReviewController {
         }
 
         // ✅ Extract user email from JWT
-        String userEmail = jwt.getClaimAsString("email");
+        String userEmail = jwt.getClaimAsString("sub");
         if (userEmail == null || userEmail.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid token: Email not found");
         }

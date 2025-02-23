@@ -37,13 +37,16 @@ public class ReviewService {
     public boolean deleteReview(String reviewId, String userEmail) {
         try {
             ObjectId objectId = new ObjectId(reviewId); // ✅ Convert String to ObjectId
-
+            System.out.println(reviewId);
+            System.out.println(userEmail);
             // ✅ Find the review by ID and ensure ownership
             Optional<Review> review = reviewRepository.findById(objectId);
 
             if (review.isPresent()) {
+                System.out.println(review);
                 // ✅ Check if the logged-in user is the owner
                 if (!review.get().getEmail().equals(userEmail)) {
+                    System.out.println("I not found the email");
                     return false; // ❌ Not authorized
                 }
 
