@@ -34,21 +34,22 @@ const Reviews = ({getMovieData,movie,reviews,setReviews}) => {
             console.error(err);
         }
     }
-  return (
-    <Container>
-        <Row>
-            <Col><h3>Reviews</h3></Col>
-        </Row>
-        <Row className="mt-2">
-            <Col>
-                <img src={movie?.poster} alt="" />
-            </Col>
-            <Col>
-                {
+    return (
+        <Container>
+            <Row>
+                <Col>
+                    <h3>Reviews</h3>
+                </Col>
+            </Row>
+            <Row className="mt-2">
+                <Col>
+                    <img src={movie?.poster} alt="Movie Poster" />
+                </Col>
+                <Col>
                     <>
                         <Row>
                             <Col>
-                                <ReviewForm handleSubmit={addReview} revText={revText} labelText = "Write a Review?" />  
+                                <ReviewForm handleSubmit={addReview} revText={revText} labelText="Write a Review?" />
                             </Col>
                         </Row>
                         <Row>
@@ -57,32 +58,44 @@ const Reviews = ({getMovieData,movie,reviews,setReviews}) => {
                             </Col>
                         </Row>
                     </>
-                }
-                {
-                    reviews?.map((r) => {
-                        return(
-                            <>
+                    {/* ✅ Scrollable Reviews Section */}
+                    <div style={styles.scrollContainer}>
+                        {reviews?.slice().reverse().map((r, index) => (
+                            <React.Fragment key={index}>
                                 <Row>
-                                    <Col><b>{r.name ? r.name + ": " : null}</b>{r.body}</Col>
+                                    <Col>
+                                        <b>{r.name ? r.name + ": " : null}</b>
+                                        {r.body}
+                                    </Col>
                                 </Row>
                                 <Row>
                                     <Col>
                                         <hr />
                                     </Col>
-                                </Row>                                
-                            </>
-                        )
-                    })
-                }
-            </Col>
-        </Row>
-        <Row>
-            <Col>
-                <hr />
-            </Col>
-        </Row>        
-    </Container>
-  )
-}
+                                </Row>
+                            </React.Fragment>
+                        ))}
+                    </div>
+                </Col>
+            </Row>
+        </Container>
+    );
+};
 
+const styles = {
+    scrollContainer: {
+        maxHeight: "600px",
+        overflowY: "auto",
+        border: "2px solid #ddd",
+        padding: "10px",
+        borderRadius: "5px",
+        boxShadow: "inset 0px 5px 5px -5px rgba(0,0,0,0.2), inset 0px -5px 5px -5px rgba(0,0,0,0.2)", // Shadow for scroll effect
+        background: "linear-gradient(white, rgba(255,255,255,0.8) 10%, rgba(255,255,255,0) 90%), linear-gradient(rgba(255,255,255,0) 10%, rgba(255,255,255,0.8) 90%, white)", // Gradient fade effect
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "top, bottom",
+        backgroundSize: "100% 10px",
+        scrollbarWidth: "thin",
+        scrollbarColor: "#888 #ddd",
+    },
+};
 export default Reviews
