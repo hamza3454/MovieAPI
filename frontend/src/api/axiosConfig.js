@@ -2,8 +2,8 @@ import axios from "axios";
 import {AppActions, AppStore} from "./AppActions";
 
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:8080", // Change to the actual API URL when deploying
-    //baseURL:'http://52.14.50.30:8080',
+    //baseURL: "http://localhost:8080", // Change to the actual API URL when deploying
+    baseURL:'http://52.14.50.30:8080',
 });
 
 // **Request Interceptor**: Attach Authorization token before requests
