@@ -13,10 +13,10 @@ const AppActions = {
         const token = localStorage.getItem("token");
 
         if (!token) {
-            return false;
+            return null;
         }
         AppActions.setAuthToken(token);
-        return true;
+        return token;
     }),
 };
 

@@ -13,7 +13,23 @@ import {AppActions }from "../../api/AppActions";
 const Header = () => {
     const [name, setname] = useState(null);
 
-      useEffect(() => {
+
+    const logout = async () => {
+        try {
+            // Get the Cognito logout URL from the backend
+            const response = await api.get("auth/logout");
+            const logoutUrl = response.data; // Backend returns the full URL
+            AppActions.setAuthToken(null);
+            console.log(AppActions.getLocalStorageAuthToken());
+            // Redirect user to Cognito logout page
+            window.location.href = logoutUrl;
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
+    };
+
+
+    useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get("code");
 
@@ -23,7 +39,15 @@ const Header = () => {
             })
             .then(response => {
                 AppActions.setAuthToken(response.data.token);
-                console.log(response.data.token);
+
+                api.get(`/name`)
+                .then(response => {
+                    console.log(response);
+                    setname(response.data.message);
+                })
+                .catch(error => {
+                    console.error("err:", error);
+        });
             })
             .catch(error => {
                 console.error("OAuth callback failed:", error);
@@ -31,16 +55,6 @@ const Header = () => {
         }
     }, []);
 
-    useEffect(() => {
-        api.get(`/name`)
-        .then(response => {
-            console.log(response);
-            setname(response.data.message);
-        })
-        .catch(error => {
-            console.error("err:", error);
-        });
-    }, []);
 
     const [cognitoUrl, setCognitoUrl] = useState('');
 
@@ -74,7 +88,7 @@ const Header = () => {
                               
                     </Nav>
                     <Button onClick={() => {window.location.href = cognitoUrl;}} variant="outline-info" className="me-2">Login</Button>
-                    <Button onClick={() => signOutRedirect()} variant="outline-info">Logout</Button>
+                    <Button onClick={() => logout()} variant="outline-info">Logout</Button>
                 </Navbar.Collapse>
             </Container>
         </Navbar>

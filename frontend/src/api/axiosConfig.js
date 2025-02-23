@@ -10,11 +10,32 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     async (config) => {
         // Ensure token is fetched from localStorage
-        AppActions.getLocalStorageAuthToken();
+        const authToken= localStorage.getItem("token");
 
-        const authToken = AppStore.authToken;
+        config.url.contains
+        console.log(config)
+        console.log(authToken)
+
+        
+        // ======================WARNING==================================
+        // Bug: this still sets the token despite the token being null. Causing 401 errors when public apis are called
         if (authToken) {
+            console.log('token is valid: ' + authToken)
             config.headers.Authorization = `Bearer ${authToken}`;
+        } else {
+            delete config.headers.Authorization;
+            console.log(config.headers)
+            console.log('token is invalid: ' + authToken)
+
+        }
+        // Hotfix: removing token when calling movies and auth api, will do for now. 
+        if (config.url.startsWith("/api/v1/movies")) {
+            delete config.headers.Authorization;
+            console.log("Skipping Authorization for Movies API:", config.url);
+        }
+        if (config.url.startsWith("/auth")) {
+            delete config.headers.Authorization;
+            console.log("Skipping Authorization for auth API:", config.url);
         }
 
         return config;
@@ -30,7 +51,13 @@ axiosInstance.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             console.error("Unauthorized! Redirecting to login...");
+            
             // Handle logout or redirection logic here (e.g., clear token, redirect to login page)
+
+          
+
+            // Redirect user to login page
+
         }
         return Promise.reject(error);
     }
